@@ -58,6 +58,10 @@ var getData = function(url, success, callback){
             success(JSON.parse(data), callback)
          }
          catch (e){
+            if (301 === res.statusCode){
+               getData(res.headers.location, success, callback)
+               return
+            }
             console.log("Error parsing url: ", url)
             console.log("Error message: ", e)
          }
@@ -172,7 +176,7 @@ var processEndpoint = function(endpointData, callback){
                method = operation.httpMethod
             }
 
-            if ('POST' === method || 'PUT' === method){
+            if ('POST' === method){
 
                for (var k = 0; k < operation.parameters.length; k++){
                   if ('body' === operation.parameters[k].paramType.toLowerCase()){
