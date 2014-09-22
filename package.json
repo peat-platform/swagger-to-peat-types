@@ -1,0 +1,31 @@
+{
+  "name": "swagger_to_openi_types",
+  "version": "0.0.1",
+  "description": "This module creates OPENi types from the specified swagger resource file.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OPENi-ict/swagger_to_openi_types.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OPENi-ict/swagger_to_openi_types/issues"
+  },
+  "homepage": "https://github.com/OPENi-ict/swagger_to_openi_types",
+  "author": {
+    "name": "dmccarthy",
+    "email": "dmccarthy@tssg.org"
+  },
+  "contributors" : [{
+      "name" : "Dylan Conway",
+      "email": "dconway@tssg.org"
+  }],
+  "dependencies": {
+    "commander" : "",
+    "async"     : ""
+  }
+}
