@@ -6,10 +6,12 @@ var async = require('async')
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-argv.version('0.0.1')
+argv.version('0.0.2')
    .option('-s, --swagger [value]',      'Link to root Swagger resource.')
    .option('-o, --openi_server [value]', 'OPENi server where the types are to be created.')
    .option('-f, --file_output [value]',  'File where output is written to.')
+   .option('-m, --mapping [value]',      'JSON object that maps related objects to OPENi Type ids.')
+   .option('-g  --models [value]',       'Only create types for models within this array')
    .option('-a, --all',                  'If specified all Swagger Models are created, otherwise just models associated with PUT operations are created.')
    .on('--help', function(){
       console.log('  Examples:');
@@ -31,6 +33,8 @@ if (!argv.swagger || !argv.openi_server || !argv.file_output){
 var swagger                = argv.swagger
 var server                 = argv.openi_server
 var out                    = argv.file_output
+var modelsToProcess        = (argv.models)  ? JSON.parse(argv.models)  : []
+var mapping                = (argv.mapping) ? JSON.parse(argv.mapping) : {}
 var o = {}
 
 
@@ -71,10 +75,15 @@ var getData = function(url, success, callback){
    });
 }
 
-var typeTranslator = function(swagger_type){
+var typeTranslator = function(swagger_type, swagger_name){
 
    if ( undefined !== swagger_type["$ref"] ){
+      console.log(">>>", swagger_type["$ref"])
       return "string";
+   }
+
+   if ('url' == swagger_name.toLowerCase()){
+      return 'url'
    }
 
    switch (swagger_type.type.toLowerCase()){
@@ -90,6 +99,18 @@ var typeTranslator = function(swagger_type){
       break
    case "date":
       return "date"
+      break
+   case "related":
+      //console.log(swagger_type, swagger_name)
+      var typeId = mapping[swagger_name]
+      //console.log("related", typeId)
+      if (undefined !== typeId){
+         return typeId
+      }
+      else{
+         console.log("Could not fnd related", swagger_type, swagger_name)
+      }
+      return "string"
       break
    default :
       return "string"
@@ -116,9 +137,6 @@ var createType = function(endpointData, model_name, type, callback){
          'Accept-Encoding':'gzip,deflate',
          'Content-Length': Buffer.byteLength(type),
          'Connection': 'keep-alive',
-         'Host':'dev.openi-ict.eu',
-         'Origin':'http://dev.openi-ict.eu',
-         'Referer':'http://dev.openi-ict.eu/api-docs/?cloudlet=true',
          "User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.94 Safari/537.36"
       }
    };
@@ -135,8 +153,8 @@ var createType = function(endpointData, model_name, type, callback){
          if(undefined === data || "" === data){
          	return
          }
-         if (JSON.parse(data).id){
-            o[endpointData][model_name] = JSON.parse(data).id
+         if (JSON.parse(data)['@id']){
+            o[endpointData][model_name] = JSON.parse(data)['@id']
          }
          else{
             var id = data.replace("{\"error\":\"Error adding entity: OPENi Type already exists (", "")
@@ -201,12 +219,16 @@ var processEndpoint = function(endpointData, callback){
 
    for ( model in models){
 
+      if ( 0 !== modelsToProcess.length && -1 === modelsToProcess.indexOf(model)){
+         continue
+      }
+
       var model_name  = model
       var model_value = endpointData.models[model]
 
-      var host_root = swagger.split('/')[0] + "//" +  swagger.split('/')[2] + "/"
+      var host_root = swagger.split('/')[0] + "//" +  swagger.split('/')[2]
 
-      var openiType = {"@context": [], "@reference" : host_root + model_name}
+      var openiType = {"@context": [], "@reference" : host_root + '/' +  model_name}
 
       var counter   = 0
 
@@ -217,10 +239,10 @@ var processEndpoint = function(endpointData, callback){
          openiType["@context"][counter] = {}
 
          openiType["@context"][counter]["@property_name"]    = prop
-         openiType["@context"][counter]["@property_context"] = {}
-
-         openiType["@context"][counter]["@property_context"]["@id"]         = host_root + prop
-         openiType["@context"][counter]["@property_context"]["@openi_type"] = typeTranslator(prop_value)
+         openiType["@context"][counter]["@openi_type"]       = typeTranslator(prop_value, prop)
+         openiType["@context"][counter]["@multiple"]         = false
+         openiType["@context"][counter]["@required"]         = false
+         openiType["@context"][counter]["@context_id"]       = host_root + '/' +  model_name + '/' + prop
          counter++
       }
 
