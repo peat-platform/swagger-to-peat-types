@@ -7,12 +7,13 @@ var async = require('async')
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 argv.version('0.0.2')
-   .option('-s, --swagger [value]',      'Link to root Swagger resource.')
-   .option('-o, --openi_server [value]', 'OPENi server where the types are to be created.')
-   .option('-f, --file_output [value]',  'File where output is written to.')
-   .option('-m, --mapping [value]',      'JSON object that maps related objects to OPENi Type ids.')
-   .option('-g  --models [value]',       'Only create types for models within this array')
-   .option('-a, --all',                  'If specified all Swagger Models are created, otherwise just models associated with PUT operations are created.')
+   .option('-s, --swagger [value]',         'Link to root Swagger resource.')
+   .option('-o, --openi_server [value]',    'OPENi server where the types are to be created.')
+   .option('-f, --file_output [value]',     'File where output is written to.')
+   .option('-m, --mapping [value]',         'JSON object that maps related objects to OPENi Type ids.')
+   .option('-g  --models [value]',          'Only create types for models within this array')
+   .option('-c  --context-prepend [value]', 'String to prepend to Endpoint names in context ids')
+   .option('-a, --all',                     'If specified all Swagger Models are created, otherwise just models associated with PUT operations are created.')
    .on('--help', function(){
       console.log('  Examples:');
       console.log('');
@@ -33,14 +34,16 @@ if (!argv.swagger || !argv.openi_server || !argv.file_output){
 var swagger                = argv.swagger
 var server                 = argv.openi_server
 var out                    = argv.file_output
-var modelsToProcess        = (argv.models)  ? JSON.parse(argv.models)  : []
-var mapping                = (argv.mapping) ? JSON.parse(argv.mapping) : {}
+var modelsToProcess        = (argv.models)         ? JSON.parse(argv.models)  : []
+var mapping                = (argv.mapping)        ? JSON.parse(argv.mapping) : {}
+var contextPrepend         = (argv.contextPrepend) ? argv.contextPrepend  : ""
 var o = {}
-
 
 var url_action = (0 === swagger.indexOf('https://')) ?  https : http
 
 var writeData = function (){
+
+
    fs.writeFile(out, JSON.stringify(o), function(err) {
       if(err) {
          console.log("Error: ", err);
@@ -154,12 +157,22 @@ var createType = function(endpointData, model_name, type, callback){
          	return
          }
          if (JSON.parse(data)['@id']){
-            o[endpointData][model_name] = JSON.parse(data)['@id']
+            if (argv.all){
+               o[endpointData][model_name] = JSON.parse(data)['@id']
+            }
+            else{
+               o[endpointData] = JSON.parse(data)['@id']
+            }
          }
          else{
             var id = data.replace("{\"error\":\"Error adding entity: OPENi Type already exists (", "")
             var id = id.replace(").\"}", "")
-            o[endpointData][model_name] = id
+            if (argv.all){
+               o[endpointData][model_name] = id
+            }
+            else{
+               o[endpointData] = id
+            }
          }
          writeData()
          //callback(null)
@@ -179,7 +192,7 @@ var processEndpoint = function(endpointData, callback){
 
    var models = {}
 
-   if (argv.all){
+   if (argv.all || 0 !== modelsToProcess.length){
       models = endpointData.models
    }
    else{
@@ -228,7 +241,7 @@ var processEndpoint = function(endpointData, callback){
 
       var host_root = swagger.split('/')[0] + "//" +  swagger.split('/')[2]
 
-      var openiType = {"@context": [], "@reference" : host_root + '/' +  model_name}
+      var openiType = {"@context": [], "@reference" : contextPrepend + model_name}
 
       var counter   = 0
 
@@ -242,7 +255,7 @@ var processEndpoint = function(endpointData, callback){
          openiType["@context"][counter]["@openi_type"]       = typeTranslator(prop_value, prop)
          openiType["@context"][counter]["@multiple"]         = false
          openiType["@context"][counter]["@required"]         = false
-         openiType["@context"][counter]["@context_id"]       = host_root + '/' +  model_name + '/' + prop
+         openiType["@context"][counter]["@context_id"]       = contextPrepend + model_name + '/' + prop
          counter++
       }
 
