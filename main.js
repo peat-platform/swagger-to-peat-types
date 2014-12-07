@@ -241,7 +241,7 @@ var processEndpoint = function(endpointData, callback){
 
       var host_root = swagger.split('/')[0] + "//" +  swagger.split('/')[2]
 
-      var openiType = {"@context": [], "@reference" : contextPrepend + model_name}
+      var openiType = {"@context": [], "@reference" : contextPrepend + ' ' + model_name}
 
       var counter   = 0
 
@@ -255,7 +255,8 @@ var processEndpoint = function(endpointData, callback){
          openiType["@context"][counter]["@openi_type"]       = typeTranslator(prop_value, prop)
          openiType["@context"][counter]["@multiple"]         = false
          openiType["@context"][counter]["@required"]         = false
-         openiType["@context"][counter]["@context_id"]       = contextPrepend + model_name + '/' + prop
+         openiType["@context"][counter]["@context_id"]       = prop.replace(/_|-|\./gi, " ")
+            .replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
          counter++
       }
 
