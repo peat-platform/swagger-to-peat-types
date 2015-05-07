@@ -8,9 +8,9 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 argv.version('0.0.2')
    .option('-s, --swagger [value]',         'Link to root Swagger resource.')
-   .option('-o, --openi_server [value]',    'OPENi server where the types are to be created.')
+   .option('-o, --peat_server [value]',     'PEAT server where the types are to be created.')
    .option('-f, --file_output [value]',     'File where output is written to.')
-   .option('-m, --mapping [value]',         'JSON object that maps related objects to OPENi Type ids.')
+   .option('-m, --mapping [value]',         'JSON object that maps related objects to PEAT Type ids.')
    .option('-g  --models [value]',          'Only create types for models within this array')
    .option('-c  --context-prepend [value]', 'String to prepend to Endpoint names in context ids')
    .option('-a, --all',                     'If specified all Swagger Models are created, otherwise just models associated with PUT operations are created.')
@@ -165,7 +165,7 @@ var createType = function(endpointData, model_name, type, callback){
             }
          }
          else{
-            var id = data.replace("{\"error\":\"Error adding entity: OPENi Type already exists (", "")
+            var id = data.replace("{\"error\":\"Error adding entity: PEAT Type already exists (", "")
             var id = id.replace(").\"}", "")
             if (argv.all){
                o[endpointData][model_name] = id
@@ -252,10 +252,10 @@ var processEndpoint = function(endpointData, callback){
          openiType["@context"][counter] = {}
 
          openiType["@context"][counter]["@property_name"]    = prop
-         openiType["@context"][counter]["@openi_type"]       = typeTranslator(prop_value, prop)
+         openiType["@context"][counter]["@type"]             = typeTranslator(prop_value, prop)
          openiType["@context"][counter]["@multiple"]         = false
          openiType["@context"][counter]["@required"]         = false
-         openiType["@context"][counter]["@context_id"]       = prop.replace(/_|-|\./gi, " ")
+         openiType["@context"][counter]["@context"]          = prop.replace(/_|-|\./gi, " ")
             .replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
          counter++
       }

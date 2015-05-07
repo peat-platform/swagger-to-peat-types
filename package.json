@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/OPENi-ict/swagger_to_openi_types.git"
+    "url": "https://github.com/peat-platform/swagger_to_openi_types.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/OPENi-ict/swagger_to_openi_types/issues"
+    "url": "https://github.com/peat-platform/swagger_to_openi_types/issues"
   },
-  "homepage": "https://github.com/OPENi-ict/swagger_to_openi_types",
+  "homepage": "https://github.com/peat-platform/swagger_to_openi_types",
   "author": {
     "name": "dmccarthy",
     "email": "dmccarthy@tssg.org"
