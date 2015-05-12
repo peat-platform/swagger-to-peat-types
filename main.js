@@ -44,7 +44,7 @@ var url_action = (0 === swagger.indexOf('https://')) ?  https : http
 var writeData = function (){
 
 
-   fs.writeFile(out, JSON.stringify(o), function(err) {
+   fs.writeFile(out, JSON.stringify(o, null, 2), function(err) {
       if(err) {
          console.log("Error: ", err);
       } else {
@@ -126,7 +126,7 @@ var createType = function(endpointData, model_name, type, callback){
 
 
    if (undefined === o[endpointData]){
-      o[endpointData] = {}
+      o[contextPrepend + " " + endpointData] = {}
    }
 
    var options = {
@@ -158,20 +158,20 @@ var createType = function(endpointData, model_name, type, callback){
          }
          if (JSON.parse(data)['@id']){
             if (argv.all){
-               o[endpointData][model_name] = JSON.parse(data)['@id']
+               o[contextPrepend + " " + endpointData][model_name] = JSON.parse(data)['@id']
             }
             else{
-               o[endpointData] = JSON.parse(data)['@id']
+               o[contextPrepend + " " + endpointData] = JSON.parse(data)['@id']
             }
          }
          else{
             var id = data.replace("{\"error\":\"Error adding entity: PEAT Type already exists (", "")
             var id = id.replace(").\"}", "")
             if (argv.all){
-               o[endpointData][model_name] = id
+               o[contextPrepend + " " + endpointData][model_name] = id
             }
             else{
-               o[endpointData] = id
+               o[contextPrepend + " " + endpointData] = id
             }
          }
          writeData()
@@ -241,7 +241,7 @@ var processEndpoint = function(endpointData, callback){
 
       var host_root = swagger.split('/')[0] + "//" +  swagger.split('/')[2]
 
-      var openiType = {"@context": [], "@reference" : contextPrepend + ' ' + model_name}
+      var openiType = {"@context": [], "@reference" : contextPrepend + ' ' + model_name.replace("_post", "")}
 
       var counter   = 0
 
@@ -269,7 +269,8 @@ var processEndpoint = function(endpointData, callback){
 var isValidURL = function(str) {
    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
       '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '((\\d{1,3}\\.){3}\\d{1,3}))|' + // OR ip (v4) address
+      'localhost' + // OR localhost
       '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
       '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
       '(\\#[-a-z\\d_]*)?$','i'); // fragment locater
@@ -281,6 +282,7 @@ var isValidURL = function(str) {
 }
 
 
+
 getData(swagger, function(swagger_root){
 
    var processAPI = function(api, err){
@@ -289,6 +291,7 @@ getData(swagger, function(swagger_root){
       if (!isValidURL(endpoint)){
          var base = swagger.substr(0, swagger.lastIndexOf('/'))
          var end  = swagger.substr(swagger.lastIndexOf('/'), swagger.length)
+
          if ( -1 !== end.indexOf('.')){
             endpoint = base + endpoint
          }

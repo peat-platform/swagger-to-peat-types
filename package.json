@@ -26,6 +26,7 @@
   }],
   "dependencies": {
     "commander" : "",
-    "async"     : ""
+    "async"     : "",
+    "merge"     : ""
   }
 }
