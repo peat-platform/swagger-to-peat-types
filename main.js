@@ -17,13 +17,13 @@ argv.version('0.0.2')
    .on('--help', function(){
       console.log('  Examples:');
       console.log('');
-      console.log('    node main.js -s https://dev.openi-ict.eu/api-spec/v1/api_framework -o dev.openi-ict.eu -f out.json');
+      console.log('    node main.js -s https://dev.peat-platform.org/api-spec/v1/api_framework -o dev.peat-platform.org -f out.json');
       console.log('');
    })
    .parse(process.argv);
 
 
-if (!argv.swagger || !argv.openi_server || !argv.file_output){
+if (!argv.swagger || !argv.peat_server || !argv.file_output){
    console.log('');
    console.log('\033[91m Error: Missing parameters\033[0m');
    console.log('');
@@ -32,7 +32,7 @@ if (!argv.swagger || !argv.openi_server || !argv.file_output){
 }
 
 var swagger                = argv.swagger
-var server                 = argv.openi_server
+var server                 = argv.peat_server
 var out                    = argv.file_output
 var modelsToProcess        = (argv.models)         ? JSON.parse(argv.models)  : []
 var mapping                = (argv.mapping)        ? JSON.parse(argv.mapping) : {}
@@ -252,7 +252,7 @@ var processEndpoint = function(endpointData, callback){
          openiType["@context"][counter] = {}
 
          openiType["@context"][counter]["@property_name"]    = prop
-         openiType["@context"][counter]["@type"]             = typeTranslator(prop_value, prop)
+         openiType["@context"][counter]["@data_type"]             = typeTranslator(prop_value, prop)
          openiType["@context"][counter]["@multiple"]         = false
          openiType["@context"][counter]["@required"]         = false
          openiType["@context"][counter]["@context"]          = prop.replace(/_|-|\./gi, " ")
@@ -260,7 +260,7 @@ var processEndpoint = function(endpointData, callback){
          counter++
       }
 
-      createType(endpointData.resourcePath.replace("/", ""), model_name, JSON.stringify(openiType), callback)
+      createType(endpointData.resourcePath.replace("/", ""), contextPrepend + ' ' + model_name, JSON.stringify(openiType), callback)
    }
 
 }
