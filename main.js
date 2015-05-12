@@ -89,7 +89,7 @@ var typeTranslator = function(swagger_type, swagger_name){
       return 'url'
    }
 
-   switch (swagger_type.type.toLowerCase()){
+   switch (swagger_type.data_type.toLowerCase()){
    case "integer":
    case "int":
       return "int"
