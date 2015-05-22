@@ -252,10 +252,10 @@ var processEndpoint = function(endpointData, callback){
          openiType["@context"][counter] = {}
 
          openiType["@context"][counter]["@property_name"]    = prop
-         openiType["@context"][counter]["@data_type"]             = typeTranslator(prop_value, prop)
+         openiType["@context"][counter]["@data_type"]        = typeTranslator(prop_value, prop)
          openiType["@context"][counter]["@multiple"]         = false
          openiType["@context"][counter]["@required"]         = false
-         openiType["@context"][counter]["@context"]          = prop.replace(/_|-|\./gi, " ")
+         openiType["@context"][counter]["@description"]      = prop.replace(/_|-|\./gi, " ")
             .replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
          counter++
       }
@@ -275,6 +275,7 @@ var isValidURL = function(str) {
       '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
       '(\\#[-a-z\\d_]*)?$','i'); // fragment locater
    if(!pattern.test(str)) {;
+      return false;
       return false;
    } else {
       return true;
