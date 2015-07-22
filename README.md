@@ -1,4 +1,4 @@
-Swagger to OPENi types
+Swagger to PEAT types
 ======================
 
 This module creates PEAT types from the specified swagger resource file.
@@ -16,7 +16,7 @@ Options:
     -h, --help                  output usage information
     -V, --version               output the version number
     -s, --swagger [value]       Link to root Swagger resource.
-    -o, --openi_server [value]  OPENi server where the types are to be created.
+    -o, --peat_server [value]   PEAT server where the types are to be created.
     -f, --file_output [value]   File where output is written to.
     -a, --all                   If specified all Swagger Models are created, otherwise just models associated with PUT operations are created.
 

@@ -241,7 +241,7 @@ var processEndpoint = function(endpointData, callback){
 
       var host_root = swagger.split('/')[0] + "//" +  swagger.split('/')[2]
 
-      var openiType = {"@context": [], "@reference" : contextPrepend + ' ' + model_name.replace("_post", "")}
+      var peatType = {"@context": [], "@reference" : contextPrepend + ' ' + model_name.replace("_post", "")}
 
       var counter   = 0
 
@@ -249,18 +249,18 @@ var processEndpoint = function(endpointData, callback){
 
          var prop_value = model_value.properties[prop]
 
-         openiType["@context"][counter] = {}
+         peatType["@context"][counter] = {}
 
-         openiType["@context"][counter]["@property_name"]    = prop
-         openiType["@context"][counter]["@data_type"]        = typeTranslator(prop_value, prop)
-         openiType["@context"][counter]["@multiple"]         = false
-         openiType["@context"][counter]["@required"]         = false
-         openiType["@context"][counter]["@description"]      = prop.replace(/_|-|\./gi, " ")
+         peatType["@context"][counter]["@property_name"]    = prop
+         peatType["@context"][counter]["@data_type"]        = typeTranslator(prop_value, prop)
+         peatType["@context"][counter]["@multiple"]         = false
+         peatType["@context"][counter]["@required"]         = false
+         peatType["@context"][counter]["@description"]      = prop.replace(/_|-|\./gi, " ")
             .replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
          counter++
       }
 
-      createType(endpointData.resourcePath.replace("/", ""), contextPrepend + ' ' + model_name, JSON.stringify(openiType), callback)
+      createType(endpointData.resourcePath.replace("/", ""), contextPrepend + ' ' + model_name, JSON.stringify(peatType), callback)
    }
 
 }
