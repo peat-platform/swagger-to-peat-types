@@ -1,21 +1,21 @@
 {
-  "name": "swagger_to_openi_types",
+  "name": "swagger_to_peat_types",
   "version": "0.0.1",
-  "description": "This module creates OPENi types from the specified swagger resource file.",
+  "description": "This module creates PEAT types from the specified swagger resource file.",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/peat-platform/swagger_to_openi_types.git"
+    "url": "https://github.com/peat-platform/swagger_to_peat_types.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/peat-platform/swagger_to_openi_types/issues"
+    "url": "https://github.com/peat-platform/swagger_to_peat_types/issues"
   },
-  "homepage": "https://github.com/peat-platform/swagger_to_openi_types",
+  "homepage": "https://github.com/peat-platform/swagger_to_peat_types",
   "author": {
     "name": "dmccarthy",
     "email": "dmccarthy@tssg.org"

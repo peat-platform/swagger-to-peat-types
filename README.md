@@ -5,7 +5,7 @@ This module creates PEAT types from the specified swagger resource file.
 
 * By default only models associated with PUT and POST actions are created. The -a flag overrides this and creates all.
 
-* A file is created which maps the endpoint and the action to the type id in the OPENi platform.
+* A file is created which maps the endpoint and the action to the type id in the PEAT platform.
 
 
 Options
